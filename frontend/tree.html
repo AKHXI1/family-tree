@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Family Tree</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Your Family Tree</h1>
+        <nav>
+            <a href="index.html" id="logoutLink">Logout</a>
+        </nav>
+    </header>
+    <main>
+        <div id="tree-container">
+            <!-- Family tree will be dynamically rendered here -->
+        </div>
+        <button id="add-member">Add Family Member</button>
+    </main>
+
+    <script>
+        // Check if the user is logged in, else redirect
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'login.html';
+        }
+
+        // Log out functionality
+        document.getElementById('logoutLink').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        });
+
+        // Fetch and display family members
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/api/family', {
+                    headers: {
+                        'Authorization': token,
+                    },
+                });
+
+                const familyData = await response.json();
+                if (response.ok) {
+                    renderFamilyTree(familyData);
+                } else {
+                    alert('Failed to load family tree');
+                }
+            } catch (error) {
+                console.error('Error fetching family tree:', error);
+            }
+        });
+
+        // Render family members in a simple format
+        function renderFamilyTree(family) {
+            const treeContainer = document.getElementById('tree-container');
+            family.forEach(member => {
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'family-member';
+                memberDiv.innerText = `${member.name} - ${member.relation}`;
+                treeContainer.appendChild(memberDiv);
+            });
+        }
+
+        // Add new family member
+        document.getElementById('add-member').addEventListener('click', async () => {
+            const name = prompt('Enter the name of the family member:');
+            const relation = prompt('Enter the relation to you:');
+            const parentId = prompt('Enter the ID of the parent (optional):');
+
+            const newMember = {
+                name,
+                relation,
+                parentId: parentId ? parentId : null,
+            };
+
+            try {
+                const response = await fetch('/api/family/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': token,
+                    },
+                    body: JSON.stringify(newMember),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('Family member added successfully!');
+                    location.reload(); // Reload the page to fetch the updated family tree
+                } else {
+                    alert('Failed to add family member');
+                }
+            } catch (error) {
+                console.error('Error adding family member:', error);
+            }
+        });
+    </script>
+</body>
+</html>

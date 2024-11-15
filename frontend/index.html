@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Tree - Home</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Welcome to Family Tree Creator</h1>
+        <nav>
+            <!-- Add login status check -->
+            <a href="register.html" id="signUpLink">Sign Up</a> |
+            <a href="login.html" id="loginLink">Login</a> |
+            <a href="tree.html" id="treeLink" style="display:none;">My Family Tree</a>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>Features</h2>
+            <ul>
+                <li>Create and visualize your family tree</li>
+                <li>Add family members with photos</li>
+                <li>Find relationships and stories</li>
+                <li>Secure and private settings</li>
+            </ul>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Family Tree Creator. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Check if the user is logged in
+        const token = localStorage.getItem('token');
+        if (token) {
+            document.getElementById('loginLink').style.display = 'none';
+            document.getElementById('signUpLink').style.display = 'none';
+            document.getElementById('treeLink').style.display = 'inline';
+        } else {
+            document.getElementById('treeLink').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
